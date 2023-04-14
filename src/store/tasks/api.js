@@ -1,4 +1,4 @@
-import { api, projectId } from "../../todosConfig";
+import { api, projectId, todoistKey } from "../../todosConfig";
 
 const getResponse = (res) => {
     if (res.ok) {
@@ -8,12 +8,25 @@ const getResponse = (res) => {
 };
 
 export const sendGetTasksRequest = () => {
+    // In case you forgot to add key
+    if (!todoistKey) {
+        return Promise.resolve([]);
+    }
+
     return fetch(`${api.baseUrl}/tasks?project_id=${projectId}`, {
         headers: api.headers,
     }).then(getResponse);
 };
 
 export const sendAddTaskRequest = (taskText) => {
+    // In case you forgot to add key
+    if (!todoistKey) {
+        return Promise.resolve({
+            id: crypto.randomUUID(),
+            content: taskText,
+        });
+    }
+
     return fetch(`${api.baseUrl}/tasks`, {
         method: "POST",
         headers: api.headers,
@@ -25,6 +38,11 @@ export const sendAddTaskRequest = (taskText) => {
 };
 
 export const sendDeleteTaskByIdRequest = (taskId) => {
+    // In case you forgot to add key
+    if (!todoistKey) {
+        return Promise.resolve(true);
+    }
+
     return fetch(`${api.baseUrl}/tasks/${taskId}`, {
         method: "DELETE",
         headers: api.headers,
